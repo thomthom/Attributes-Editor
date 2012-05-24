@@ -1,4 +1,60 @@
-html {
-  color: #333;
-  background: #fff;
+h1 {
+  background: #444;
+  margin: -4px -4px 4px -4px;
+  padding: 5px 10px;
+  font-size: 1.2em;
+}
+
+dl.dictionary {
+  border: 1px solid #666;
+  padding: 0;
+  margin: 0 0 5px 0;
+}
+
+.dictionary dt {
+  background: #333;
+  padding: 5px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.dictionary dd {
+  padding: 0;
+  margin: 0;
+  /*display: none;*/
+}
+
+.dictionary table {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+.dictionary tr:hover td {
+  background: #743;
+}
+.dictionary td {
+  vertical-align: top;
+  background: #393939;
+  padding: 3px;
+  margin: 2px;
+}
+.dictionary .key {
+  background: #444;
+  font-weight: bold;
+  text-align: right;
+  white-space: nowrap;
+}
+.dictionary .value {
+  cursor: text;
+  overflow-x: hidden;
+}
+
+.message {
+  display: block;
+  text-align: center;
+  color: #eee;
+  background: #468;
+  border: 1px solid #579;
+  margin: 2px;
+  padding: 10px 4px;
 }
