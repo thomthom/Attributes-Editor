@@ -105,27 +105,34 @@ module TT::Plugins::AttributesBrowser
   # @since 1.0.0
   def self.edit_attributes
     model = Sketchup.active_model
+    window = @wnd_attributes
     
-    puts '<Edit Attributes>'
-    puts '> Clearing Window...'
-    @wnd_attributes.call_script( 'AttributesWindow.clear' )
+    #puts '<Edit Attributes>'
+    #puts '> Clearing Window...'
+    window.call_script( 'AttributesWindow.clear' )
     
     if model.selection.empty?
       entity = model
     elsif model.selection.length == 1
       entity = model.selection[0]
+    elsif model.selection.is_curve?
+      # (!) One segment curve?
+      entity = model.selection[0].curve
     else
-      @wnd_attributes.call_script( 'AttributesWindow.empty' )
-      puts 'Invalid selection!.'
+      window.call_script( 'AttributesWindow.empty' )
+      #puts 'Invalid selection!.'
       UI.beep
       return
     end
     
-    @wnd_attributes.call_script( 'AttributesWindow.entity', entity.inspect )
+    window.call_script( 'AttributesWindow.entity', entity.inspect )
+    
+    # (!) ComponentDefinition
+    # (!) Curve ( selection.is_curve? )
     
     if entity.attribute_dictionaries.nil?
-      @wnd_attributes.call_script( 'AttributesWindow.empty' )
-      puts 'No dictionaries!'
+      window.call_script( 'AttributesWindow.empty' )
+      #puts 'No dictionaries!'
       UI.beep
       return
     end
@@ -135,12 +142,15 @@ module TT::Plugins::AttributesBrowser
       attributes = {}
       dictionary.each_pair { | key, value |
         attributes[key] = value
-        #p [ key, value ]
+        # (!) Custom Handling
+        #     * Geom::Point3d
+        #     * Geom::Vector3d
+        #     * ???
       }
-      @wnd_attributes.call_script( add_dictionary, dictionary.name, attributes )
+      window.call_script( add_dictionary, dictionary.name, attributes )
     end
     
-    puts '</Edit Attributes>'
+    #puts '</Edit Attributes>'
   end
   
   # @return [String]
@@ -162,13 +172,13 @@ module TT::Plugins::AttributesBrowser
     window.add_style(  File.join( 'file:///', PATH_UI, 'window.css' )    )
     
     window.add_action_callback( 'Update_Attributes' ) { |dialog, params|
-      puts "Update_Attributes()"
+      #puts "Update_Attributes()"
       self.selection_changed( Sketchup.active_model.selection )
       self.observe_models
     }
     
     window.set_on_close {
-      puts 'Window Closing...'
+      #puts 'Window Closing...'
       # Detach observers.
       if @app_observer
         Sketchup.remove_observer( @app_observer )
@@ -185,7 +195,7 @@ module TT::Plugins::AttributesBrowser
   #
   # @since 1.0.0
   def self.selection_changed( selection )
-    puts "Selection Changed (#{selection.length})"
+    #puts "Selection Changed (#{selection.length})"
     if @wnd_attributes && @wnd_attributes.visible?
       self.edit_attributes
     end
@@ -196,7 +206,7 @@ module TT::Plugins::AttributesBrowser
   #
   # @since 1.0.0
   def self.observe_selection( model )
-    puts '> Attaching Selection Observer'
+    #puts '> Attaching Selection Observer'
     @selection_observer ||= SelectionObserver.new { |selection|
       self.selection_changed( selection )
     }
@@ -207,12 +217,12 @@ module TT::Plugins::AttributesBrowser
   
   # @since 1.0.0
   def self.observe_models
-    puts 'Observing current model'
+    #puts 'Observing current model'
     @app_observer ||= AppObserver.new
     Sketchup.remove_observer( @app_observer ) if @app_observer
     Sketchup.add_observer( @app_observer )
     self.observe_selection( Sketchup.active_model )
-    puts '---'
+    #puts '---'
   end
   
   

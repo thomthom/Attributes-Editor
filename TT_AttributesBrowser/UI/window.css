@@ -47,6 +47,7 @@ dl.dictionary {
 .dictionary .value {
   cursor: text;
   overflow-x: hidden;
+  font-family: 'Consolas', monospace;
 }
 
 .message {
